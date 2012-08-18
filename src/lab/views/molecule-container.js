@@ -20,10 +20,9 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
       playback_component, time_label,
       padding, size,
       mw, mh, tx, ty, stroke,
-      x, downscalex, downx,
-      y, downscaley, downy,
+      x,
+      y,
       y_flip,
-      dragged,
       pc_xpos, pc_ypos,
       model_time_formatter = d3.format("5.2f"),
       time_prefix = "time: ",
@@ -174,10 +173,6 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
         .domain([options.xmin, options.xmax])
         .range([0, mw]);
 
-    // drag x-axis logic
-    downscalex = x.copy();
-    downx = NaN;
-
     // y-scale (inverted domain)
     y = d3.scale.linear()
         .domain([options.ymax, options.ymin])
@@ -192,10 +187,6 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
         .range([0, mh])
         .nice();
 
-    // drag x-axis logic
-    downscaley = y.copy();
-    downy = NaN;
-    dragged = null;
     return [cx, cy];
   }
 
@@ -505,10 +496,6 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
     }
 
     function redraw() {
-      if (d3.event && d3.event.transform && isNaN(downx) && isNaN(downy)) {
-          d3.event.transform(x, y);
-      }
-
       var fx = x.tickFormat(10),
           fy = y.tickFormat(10);
 
