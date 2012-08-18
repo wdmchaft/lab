@@ -151,6 +151,7 @@ controllers.modelController = function(moleculeViewId, modelConfig, playerConfig
       model_player.back = function() {},
 
       moleculeContainer = Lab.moleculeContainer(moleculeViewId, {
+        fit_to_parent:        true,
         xmax:                 width,
         ymax:                 height,
         chargeShading:        chargeShading,
@@ -175,6 +176,7 @@ controllers.modelController = function(moleculeViewId, modelConfig, playerConfig
       // ------------------------------------------------------------
 
       moleculeContainer.reset({
+        fit_to_parent:        true,
         xmax:                 width,
         ymax:                 height,
         chargeShading:        chargeShading,
