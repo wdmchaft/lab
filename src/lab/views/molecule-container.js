@@ -724,37 +724,36 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
         .style("stroke-dasharray", function (d, i) {if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )) { return "5 5";} else {return "";}});
     }
 
-    function drawAttractionForces(){
-        /*Logic for drawing attraction forces between atoms */
-        for(var atom1 = 0;atom1 < mock_atoms_array.length;atom1++){
-            for(var atom2 =0 ;atom2<atom1;atom2++) {
-                var xs = (x(get_x(atom1))-x(get_x(atom2)));
-                var ys = (y(get_y(atom1))-y(get_y(atom2)));
-                var dist;
-                xs = xs * xs;
-                ys = ys * ys;
-                dist =  Math.sqrt( xs + ys );
-                if (dist <= 70 &&
-                          (((get_charge(atom1) === 0) && (get_charge(atom2) === 0)) ||
-                        ((get_charge(atom1) === 0) && (get_charge(atom2) < 0)) ||
-                        ((get_charge(atom1) === 0) && (get_charge(atom2) > 0)) ||
-                        ((get_charge(atom1) < 0) && (get_charge(atom2) === 0)) ||
-                        ((get_charge(atom1) > 0) && (get_charge(atom2) === 0)) ||
-                        (((get_charge(atom1) > 0) && (get_charge(atom2) < 0)) ||
-                        (get_charge(atom1) < 0) && (get_charge(atom2) > 0))))
-                {
-                    gradient_container.append("line")
-                        .attr("x1", x(get_x(atom1)))
-                        .attr("y1", y(get_y(atom1)))
-                        .attr("x2", x(get_x(atom2)))
-                        .attr("y2", y(get_y(atom2)))
-                        .style("stroke-width", 1)
-                        .style("stroke", "#000000")
-                        .style("stroke-dasharray", "5 3");
-                }
-            }
+    function drawAttractionForces() {
+      /*Logic for drawing attraction forces between atoms */
+      var atom1, atom2, dx, dy;
+
+      function chargesRepel(atom1, atom2) {
+        // assume logic is faster than multiplying
+        if (get_charge(atom1) < 0 && get_charge(atom2) < 0) return true;
+        if (get_charge(atom1) > 0 && get_charge(atom2) > 0) return true;
+        return false;
+      }
+
+      for (atom1 = 0; atom1 < mock_atoms_array.length; atom1++) {
+        for (atom2 = 0; atom2 < atom1; atom2++) {
+
+          dx = get_x(atom1) - get_x(atom2);
+          dy = get_y(atom1) - get_y(atom2);
+
+          if (dx*dx + dy*dy < 0.1 && !chargesRepel(atom1, atom2)) {
+            gradient_container.append("line")
+              .attr("x1", x(get_x(atom1)))
+              .attr("y1", y(get_y(atom1)))
+              .attr("x2", x(get_x(atom2)))
+              .attr("y2", y(get_y(atom2)))
+              .style("stroke-width", 1)
+              .style("stroke", "#000000")
+              .style("stroke-dasharray", "5 3");
+          }
         }
-        /*Logic for drawing attraction forces between atoms */
+      }
+      /*Logic for drawing attraction forces between atoms */
     }
 
     function setup_drawables() {
