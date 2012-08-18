@@ -281,14 +281,10 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
   function get_radial_bond_strength(i) {
     return radialBonds[model.RADIAL_INDICES.STRENGTH][i];
   }
-    function chargeShadingMode() {
-        if (model.get("chargeShading")) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
+
+  function chargeShadingMode() {
+    return !!model.get('chargeShading');
+  }
 
   function container() {
     // if (node.clientWidth && node.clientHeight) {
