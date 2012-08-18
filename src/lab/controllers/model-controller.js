@@ -162,8 +162,6 @@ controllers.modelController = function(moleculeViewId, modelConfig, playerConfig
 
         control_buttons:      controlButtons
       });
-
-      moleculeContainer.updateMoleculeRadius();
       moleculeContainer.setup_drawables();
     }
 
@@ -187,7 +185,6 @@ controllers.modelController = function(moleculeViewId, modelConfig, playerConfig
 
         control_buttons:      controlButtons
       });
-      moleculeContainer.updateMoleculeRadius();
       moleculeContainer.setup_drawables();
     }
 
