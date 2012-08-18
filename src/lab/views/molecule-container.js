@@ -19,7 +19,7 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
       vis1, vis, plot,
       playback_component, time_label,
       padding, size,
-      mw, mh, tx, ty, stroke,
+      tx, ty, stroke,
       x,
       y,
       y_flip,
@@ -101,13 +101,17 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
 
   function scale(w, h) {
     var modelSize = model.size(),
-        aspectRatio = modelSize[0] / modelSize[1];
-    scale_factor = layout.screen_factor;
+        aspectRatio = modelSize[0] / modelSize[1],
+        mw,
+        mh;
+
+    scale_factor = options.fit_to_parent ? 1 : layout.screen_factor;
+
     padding = {
-       "top":    options.title  ? 40 * layout.screen_factor : 20,
-       "right":                   25,
-       "bottom": 10,
-       "left":   options.ylabel ? 60  * layout.screen_factor : 25
+       top:    options.title  ? 40 * scale_factor : 20,
+       right:                   25,
+       bottom:                  10,
+       left:   options.ylabel ? 60  * scale_factor : 25
     };
 
     if (options.xlabel || options.model_time_label) {
@@ -125,6 +129,7 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
       // In 'fit-to-parent' mode, we allow the viewBox parameter to fit the svg
       // node into the containing element and allow the containing element to be
       // sized by CSS (or Javascript)
+
       cx = 500;
       width = cx - padding.left - padding.right;
       height = width / aspectRatio;
@@ -146,8 +151,8 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
     }
 
     size = {
-      "width":  width,
-      "height": height
+      width:  width,
+      height: height
     };
 
     offset_top = node.offsetTop + padding.top;
