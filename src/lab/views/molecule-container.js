@@ -676,68 +676,52 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
 
     function radialBondEnter(radialBond) {
       var element, grad;
-        radialBond.enter().append("line")
-                    .attr("x1", function (d, i) {return x(get_x(get_radial_bond_atom_1(i)));})
-                    .attr("y1", function (d, i) {return y(get_y(get_radial_bond_atom_1(i)));})
-                    .attr("x2", function (d, i) {return ((x(get_x(get_radial_bond_atom_1(i)))+x(get_x(get_radial_bond_atom_2(i))))/2);})
-                    .attr("y2", function (d, i) {return ((y(get_y(get_radial_bond_atom_1(i)))+y(get_y(get_radial_bond_atom_2(i))))/2);})
-                    .style("stroke-width", function (d, i) {return x(get_radius(get_radial_bond_atom_1(i)))*0.75;})
-                    .style("stroke", function(d, i) {
-                if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )){
-                    return "#000000";
-                }
-                else {
-                    if (chargeShadingMode()) {
-                        if (get_charge(get_radial_bond_atom_1(i)) > 0){
-                            return  bondColorArray[4];
-                        }
-                        else if (get_charge(get_radial_bond_atom_1(i)) < 0){
-                            return  bondColorArray[5];
-                        }
-                        else {
-                            //element = get_element(get_radial_bond_atom_1(i)) % 4;
-                            //grad = bondColorArray[element];
-                            return "#A4A4A4";
-                        }
-                    } else {
-                        element = get_element(get_radial_bond_atom_1(i)) % 4;
-                        grad = bondColorArray[element];
-                        return grad;
-                    }
-                }
-            })
-            .style("stroke-dasharray", function (d, i) {if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )) { return "5 5"; } else {return "";}});
-        radialBond.enter().append("line")
-                    .attr("x2", function (d, i) {return ((x(get_x(get_radial_bond_atom_1(i)))+x(get_x(get_radial_bond_atom_2(i))))/2);})
-                    .attr("y2", function (d, i) {return ((y(get_y(get_radial_bond_atom_1(i)))+y(get_y(get_radial_bond_atom_2(i))))/2);})
-                    .attr("x1", function (d, i) {return x(get_x(get_radial_bond_atom_2(i)));})
-                    .attr("y1", function (d, i) {return y(get_y(get_radial_bond_atom_2(i)));})
-                    .style("stroke-width", function (d, i) {return x(get_radius(get_radial_bond_atom_2(i)))*0.75;})
-                    .style("stroke", function(d, i) {
-                if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )){
-                    return "#000000";
-                }
-                else {
-                    if (chargeShadingMode()) {
-                        if (get_charge(get_radial_bond_atom_2(i)) > 0){
-                            return  bondColorArray[4];
-                        }
-                        else if (get_charge(get_radial_bond_atom_2(i)) < 0){
-                            return  bondColorArray[5];
-                        }
-                        else {
-                            //element = get_element(get_radial_bond_atom_2(i)) % 4;
-                            //grad = bondColorArray[element];
-                            return "#A4A4A4";
-                        }
-                    } else {
-                        element = get_element(get_radial_bond_atom_2(i)) % 4;
-                        grad = bondColorArray[element];
-                        return grad;
-                    }
-                }
-    })
-                    .style("stroke-dasharray", function (d, i) {if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )) { return "5 5";} else {return "";}});
+
+      function radialBondStroke(atom) {
+        var get_atom;
+
+        if (atom === 1) {
+          get_atom = get_radial_bond_atom_1;
+        } else {
+          get_atom = get_radial_bond_atom_2;
+        }
+
+        return function stroke(d, i) {
+          if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )) {
+            return "#000000";
+          }
+
+          if (chargeShadingMode()) {
+            if (get_charge(get_atom(i)) > 0) {
+              return bondColorArray[4];
+            } else if (get_charge(get_atom(i)) < 0) {
+              return bondColorArray[5];
+            }
+            return "#A4A4A4";
+          }
+
+          element = get_element(get_atom(i)) % 4;
+          return bondColorArray[element];
+        };
+      }
+
+      radialBond.enter().append("line")
+        .attr("x1", function (d, i) {return x(get_x(get_radial_bond_atom_1(i)));})
+        .attr("y1", function (d, i) {return y(get_y(get_radial_bond_atom_1(i)));})
+        .attr("x2", function (d, i) {return ((x(get_x(get_radial_bond_atom_1(i)))+x(get_x(get_radial_bond_atom_2(i))))/2);})
+        .attr("y2", function (d, i) {return ((y(get_y(get_radial_bond_atom_1(i)))+y(get_y(get_radial_bond_atom_2(i))))/2);})
+        .style("stroke-width", function (d, i) {return x(get_radius(get_radial_bond_atom_1(i)))*0.75;})
+        .style("stroke", radialBondStroke(1))
+        .style("stroke-dasharray", function (d, i) {if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )) { return "5 5"; } else {return "";}});
+
+      radialBond.enter().append("line")
+        .attr("x2", function (d, i) {return ((x(get_x(get_radial_bond_atom_1(i)))+x(get_x(get_radial_bond_atom_2(i))))/2);})
+        .attr("y2", function (d, i) {return ((y(get_y(get_radial_bond_atom_1(i)))+y(get_y(get_radial_bond_atom_2(i))))/2);})
+        .attr("x1", function (d, i) {return x(get_x(get_radial_bond_atom_2(i)));})
+        .attr("y1", function (d, i) {return y(get_y(get_radial_bond_atom_2(i)));})
+        .style("stroke-width", function (d, i) {return x(get_radius(get_radial_bond_atom_2(i)))*0.75;})
+        .style("stroke", radialBondStroke(2))
+        .style("stroke-dasharray", function (d, i) {if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )) { return "5 5";} else {return "";}});
     }
 
     function drawAttractionForces(){
