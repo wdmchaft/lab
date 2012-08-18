@@ -1,3 +1,5 @@
+/*globals Lab:true layout:true model d3 PlayOnlyComponentSVG PlaybackComponentSVG PlayResetComponentSVG model_player */
+
 // ------------------------------------------------------------
 //
 //   Molecule Container
@@ -20,26 +22,26 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
       mw, mh, tx, ty, stroke,
       x, downscalex, downx,
       y, downscaley, downy,
+      y_flip,
       dragged,
       pc_xpos, pc_ypos,
       model_time_formatter = d3.format("5.2f"),
       time_prefix = "time: ",
       time_suffix = " (ps)",
+      gradient,
       gradient_container,
-      red_gradient,
-      blue_gradient,
-      green_gradient,
       element_gradient_array,
       atom_tooltip_on,
       offset_left, offset_top,
-      particle, label, labelEnter, tail,
-      molRadius,
+      particle, label, labelEnter,
       molecule_div, molecule_div_pre,
       mock_atoms_array = [],
       get_num_atoms,
       nodes,
       get_nodes,
       obstacle,
+      obstacles,
+      radialBonds,
       get_obstacles,
       mock_obstacles_array = [],
       mock_radial_bond_array = [],
@@ -96,7 +98,7 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
 
     get_obstacles = options.get_obstacles;
     getRadialBonds = options.get_radial_bonds;
-  };
+  }
 
   function scale(w, h) {
     var modelSize = model.size(),
@@ -174,7 +176,7 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
 
     // drag x-axis logic
     downscalex = x.copy();
-    downx = Math.NaN;
+    downx = NaN;
 
     // y-scale (inverted domain)
     y = d3.scale.linear()
@@ -192,7 +194,7 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
 
     // drag x-axis logic
     downscaley = y.copy();
-    downy = Math.NaN;
+    downy = NaN;
     dragged = null;
     return [cx, cy];
   }
@@ -381,7 +383,7 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
         .attr("y", 5)
         .attr("width", "3%")
         .attr("height", "3%")
-        .attr("xlink:href", "../../resources/heatbath.gif")
+        .attr("xlink:href", "../../resources/heatbath.gif");
 
       model.addPropertiesListener(["temperature_control"], updateHeatBath);
       updateHeatBath();
@@ -642,6 +644,8 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
       Call this wherever a d3 selection is being used to add circles for atoms
     */
     function circlesEnter(particle) {
+      var element, grad;
+
       particle.enter().append("circle")
           .attr("r",  function(d, i) { return x(get_radius(i)); })
           .attr("cx", function(d, i) { return x(get_x(i)); })
@@ -678,17 +682,18 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
           .attr("height", function(d, i) {return y_flip(get_obstacle_height(i)); })
           .style("fill", function(d, i) {
             return get_obstacle_visible(i) ? get_obstacle_color(i) : "rgba(128,128,128, 0)"; })
-          .style("stroke-width", function(d, i) {return get_obstacle_visible(i) ? 0.2 : 0.0})
+          .style("stroke-width", function(d, i) { return get_obstacle_visible(i) ? 0.2 : 0.0; })
           .style("stroke", "black");
     }
 
     function radialBondEnter(radialBond) {
+      var element, grad;
         radialBond.enter().append("line")
                     .attr("x1", function (d, i) {return x(get_x(get_radial_bond_atom_1(i)));})
                     .attr("y1", function (d, i) {return y(get_y(get_radial_bond_atom_1(i)));})
                     .attr("x2", function (d, i) {return ((x(get_x(get_radial_bond_atom_1(i)))+x(get_x(get_radial_bond_atom_2(i))))/2);})
                     .attr("y2", function (d, i) {return ((y(get_y(get_radial_bond_atom_1(i)))+y(get_y(get_radial_bond_atom_2(i))))/2);})
-                    .style("stroke-width", function (d, i) {return x(get_radius(get_radial_bond_atom_1(i)))*0.75})
+                    .style("stroke-width", function (d, i) {return x(get_radius(get_radial_bond_atom_1(i)))*0.75;})
                     .style("stroke", function(d, i) {
                 if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )){
                     return "#000000";
@@ -713,13 +718,13 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
                     }
                 }
             })
-            .style("stroke-dasharray", function (d, i) {if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )) { return "5 5"} else {return "";}});
+            .style("stroke-dasharray", function (d, i) {if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )) { return "5 5"; } else {return "";}});
         radialBond.enter().append("line")
                     .attr("x2", function (d, i) {return ((x(get_x(get_radial_bond_atom_1(i)))+x(get_x(get_radial_bond_atom_2(i))))/2);})
                     .attr("y2", function (d, i) {return ((y(get_y(get_radial_bond_atom_1(i)))+y(get_y(get_radial_bond_atom_2(i))))/2);})
                     .attr("x1", function (d, i) {return x(get_x(get_radial_bond_atom_2(i)));})
                     .attr("y1", function (d, i) {return y(get_y(get_radial_bond_atom_2(i)));})
-                    .style("stroke-width", function (d, i) {return x(get_radius(get_radial_bond_atom_2(i)))*0.75})
+                    .style("stroke-width", function (d, i) {return x(get_radius(get_radial_bond_atom_2(i)))*0.75;})
                     .style("stroke", function(d, i) {
                 if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )){
                     return "#000000";
@@ -744,7 +749,7 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
                     }
                 }
     })
-                    .style("stroke-dasharray", function (d, i) {if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )) { return "5 5"} else {return "";}});
+                    .style("stroke-dasharray", function (d, i) {if((Math.ceil(get_radial_bond_length(i) > 0.3 )) && (get_radial_bond_strength(i) < 2000 )) { return "5 5";} else {return "";}});
     }
 
     function drawAttractionForces(){
@@ -758,13 +763,13 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
                 ys = ys * ys;
                 dist =  Math.sqrt( xs + ys );
                 if (dist <= 70 &&
-                          (((get_charge(atom1) == 0) && (get_charge(atom2) == 0))
-                        || ((get_charge(atom1) == 0) && (get_charge(atom2) < 0))
-                        || ((get_charge(atom1) == 0) && (get_charge(atom2) > 0))
-                        || ((get_charge(atom1) < 0) && (get_charge(atom2) == 0))
-                        || ((get_charge(atom1) > 0) && (get_charge(atom2) == 0))
-                        || (((get_charge(atom1) > 0) && (get_charge(atom2) < 0))
-                        || (get_charge(atom1) < 0) && (get_charge(atom2) > 0))))
+                          (((get_charge(atom1) === 0) && (get_charge(atom2) === 0)) ||
+                        ((get_charge(atom1) === 0) && (get_charge(atom2) < 0)) ||
+                        ((get_charge(atom1) === 0) && (get_charge(atom2) > 0)) ||
+                        ((get_charge(atom1) < 0) && (get_charge(atom2) === 0)) ||
+                        ((get_charge(atom1) > 0) && (get_charge(atom2) === 0)) ||
+                        (((get_charge(atom1) > 0) && (get_charge(atom2) < 0)) ||
+                        (get_charge(atom1) < 0) && (get_charge(atom2) > 0))))
                 {
                     gradient_container.append("line")
                         .attr("x1", x(get_x(atom1)))
@@ -793,10 +798,7 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
 
       get_num_atoms = options.get_num_atoms;
       mock_atoms_array.length = get_num_atoms();
-
       var ljf = model.getLJCalculator()[0][0].coefficients();
-      // // molRadius = ljf.rmin * 0.5;
-      // // model.set_radius(molRadius);
 
       gradient_container.selectAll("circle").remove();
       gradient_container.selectAll("g").remove();
@@ -842,11 +844,13 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
                         return;
                     }
                 }
-            })
+            });
       }
     }
 
     function setup_obstacles() {
+      var obstacle;
+
       gradient_container.selectAll("rect").remove();
 
       obstacles = get_obstacles();
@@ -878,12 +882,6 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
 
     function mousedown() {
       node.focus();
-    }
-
-    function molecule_mouseover(d) {
-      // molecule_div.transition()
-      //       .duration(250)
-      //       .style("opacity", 1);
     }
 
     function molecule_mousedown(d, i) {
@@ -919,9 +917,6 @@ Lab.moleculeContainer = layout.moleculeContainer = function(e, options) {
           "ax:    " + d3.format("+6.3e")(get_ax(i))    + "\n" +
           "ay:    " + d3.format("+6.3e")(get_ay(i))    + "\n"
         );
-    }
-
-    function molecule_mousemove(d) {
     }
 
     function molecule_mouseout() {
