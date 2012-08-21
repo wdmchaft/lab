@@ -109,46 +109,6 @@ def velocities(initial_ke_in_ev, n, angle)
   return [vx, vy]
 end
 
-class Cml < Mustache
-  self.template_path = File.dirname(__FILE__)
-  attr_reader :model_number
-  def initialize(model_num)
-    @model_number = model_num
-  end
-end
-
-class Mml < Mustache
-  self.template_path = File.dirname(__FILE__)
-  attr_reader :number_of_particles, :epsilon, :sigma, :mass, :width, :height, :atoms
-  def initialize(number_of_particles, epsilon, sigma, mass, width, height, atoms)
-    @number_of_particles = number_of_particles
-    @epsilon = epsilon
-    @sigma = sigma
-    @mass = mass
-    @width = width
-    @height = height
-    @atoms = atoms
-  end
-end
-
-def generate_mw_files(num, epsilon, x, y, vx, vy)
-  File.open(File.join(CLASSIC_PATH, "model#{num}.cml"), 'w') { |f| f.write Cml.new(num).render }
-  atoms = [x, y, vx, vy].transpose.collect { |a|
-    { "rx" => 100*a[0], "ry" => 100*a[1], "vx" => 100*a[2], "vy" => 100*a[3] }
-  }
-  File.open(File.join(CLASSIC_PATH, "model#{num}$0.mml"), 'w') do |f|
-    f.write Mml.new(atoms.length, epsilon, 100*SIGMA, MASS/120, WIDTH*100, HEIGHT*100, atoms).render
-  end
-end
-
-def convert_mml_file(num)
-  converter =  File.join(PROJECT_ROOT, "node_modules/.bin/coffee") + ' ' + File.join(PROJECT_ROOT, "node-bin/convert-mml.coffee")
-  input_mml_file = File.join(CLASSIC_PATH, "model#{num}$0.mml")
-  output_json_file = File.join(NEXTGEN_PATH, "model#{num}.json")
-  cmd = "#{converter} '#{input_mml_file}' #{output_json_file}"
-  puts "\ncommand:\n#{cmd}"
-  system(cmd)
-end
 
 def copy_radial_files()
   source = File.join(PROJECT_ROOT,'server/public/imports/legacy-mw-content/converted/conversion-and-physics-examples/one-radial-bond$0.json')
