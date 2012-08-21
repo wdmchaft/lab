@@ -16,3 +16,4 @@ npm-debug.log
 **/couchdb.stdout
 /config/deploy
 src/experiments/inquiry-space-importer/reference/Importer.js
+/home/jackson/lab/validation/models/md2d/radial_bonds_autogendata_test/data/nextgen
