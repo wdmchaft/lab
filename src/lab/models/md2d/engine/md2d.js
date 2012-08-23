@@ -154,6 +154,13 @@ exports.RADIAL_INDICES = RADIAL_INDICES = {
   STRENGTH:  3
 };
 
+exports.VDW_PAIR_INDICES = VDW_PAIR_INDICES = {
+  ATOM1   :  0,
+  ATOM2   :  1,
+  LENGTH  :  2,
+  STRENGTH:  3
+};
+
 exports.SAVEABLE_INDICES = SAVEABLE_INDICES = ["X", "Y","VX","VY", "CHARGE", "ELEMENT"];
 
 exports.makeModel = function() {
@@ -175,6 +182,9 @@ exports.makeModel = function() {
 
       // Whether to simulate Lennard Jones forces between particles.
       useLennardJonesInteraction = true,
+
+      // Whether to automaticaly calculate VDW Line Pairs
+      calculateVDWLinePairs = false,
 
       // Whether to use the thermostat to maintain the system temperature near T_target.
       useThermostat = false,
@@ -335,9 +345,21 @@ exports.makeModel = function() {
         totalMass = savedTotalMass;
       },
 
+      createVDWPairsArray = function(num) {
+        var float32 = (hasTypedArrays && notSafari) ? 'Float32Array' : 'regular',
+            uint16  = (hasTypedArrays && notSafari) ? 'Uint16Array' : 'regular', radialIndices = RADIAL_INDICES;
+
+        radialBonds = model.radialBonds = [];
+
+        radialBonds[radialIndices.ATOM1] = radialBondAtom1Index = arrays.create(num, 0, uint16);
+        radialBonds[radialIndices.ATOM2] = radialBondAtom2Index = arrays.create(num, 0, uint16);
+        radialBonds[radialIndices.LENGTH] = radialBondLength     = arrays.create(num, 0, float32);
+        radialBonds[radialIndices.STRENGTH] = radialBondStrength   = arrays.create(num, 0, float32);
+      },
+
       createRadialBondsArray = function(num) {
-      var float32 = (hasTypedArrays && notSafari) ? 'Float32Array' : 'regular',
-          uint16  = (hasTypedArrays && notSafari) ? 'Uint16Array' : 'regular', radialIndices = RADIAL_INDICES;
+        var float32 = (hasTypedArrays && notSafari) ? 'Float32Array' : 'regular',
+            uint16  = (hasTypedArrays && notSafari) ? 'Uint16Array' : 'regular', radialIndices = RADIAL_INDICES;
 
         radialBonds = model.radialBonds = [];
 
@@ -818,6 +840,10 @@ exports.makeModel = function() {
 
     useLennardJonesInteraction: function(v) {
       useLennardJonesInteraction = !!v;
+    },
+
+    calculateVDWLinePairs: function(v) {
+      calculateVDWLinePairs = !!v;
     },
 
     useThermostat: function(v) {
@@ -1369,6 +1395,27 @@ exports.makeModel = function() {
         if (useLennardJonesInteraction) {
           PE += ljCalculator[el1][el2].potentialFromSquaredDistance(r_sq);
         }
+      }
+
+      // calculate VDW Line Pairs
+      for (i = 0; i < N; i++) {
+        x_prev = x[i];
+        y_prev = y[i];
+
+        // Update r(t+dt) using v(t) and a(t)
+        updatePosition(i);
+        bounceOffWalls(i);
+        bounceOffObstacles(i, x_prev, y_prev);
+
+        // First half of update of v(t+dt, i), using v(t, i) and a(t, i)
+        halfUpdateVelocity(i);
+
+        // Zero out a(t, i) for accumulation of a(t+dt, i)
+        ax[i] = ay[i] = 0;
+
+        // Accumulate accelerations for time t+dt into a(t+dt, k) for k <= i. Note that a(t+dt, i) won't be
+        // usable until this loop completes; it won't have contributions from a(t+dt, k) for k > i
+        updatePairwiseAccelerations(i);
       }
 
       // State to be read by the rest of the system:
