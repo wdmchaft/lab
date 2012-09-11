@@ -974,7 +974,12 @@ exports.makeModel = function() {
           }
           T = target;
         }
-      };
+      },
+
+      maxAcceleration = 0,
+      timeOfMaxAcceleration,
+      maxTemperature = 0,
+      timeOfMaxTemperature;
 
 
   return model = {
@@ -1567,6 +1572,38 @@ exports.makeModel = function() {
           x_prev,
           y_prev;
 
+      function checkAccelerations() {
+        var acceleration, i;
+
+        for (i = 0; i < N; i++) {
+          acceleration = Math.sqrt(ax[i]*ax[i] + ay[i]*ay[i]);
+
+          if (acceleration > maxAcceleration) {
+            maxAcceleration = acceleration;
+            timeOfMaxAcceleration = time;
+            // console.log(acceleration + " at " + time);
+          }
+
+          if (acceleration > 0.1) debugger;
+        }
+      }
+
+      function checkTemperature() {
+        var ke = 0, temperature;
+
+        for (var i = 0; i < N; i++) {
+          ke += 0.5 * (vx[i]*vx[i] + vy[i]*vy[i]) * elements[element[i]][0];
+        }
+
+        temperature = KE_to_T(ke, N);
+
+        if (temperature > maxTemperature) {
+          maxTemperature = temperature;
+          timeOfMaxTemperature = time;
+          console.log(temperature + " at " + time);
+        }
+      }
+
       for (iloop = 1; iloop <= n_steps; iloop++) {
         time = t_start + iloop*dt;
 
@@ -1590,6 +1627,8 @@ exports.makeModel = function() {
           updatePairwiseAccelerations(i);
         }
 
+        checkAccelerations();
+
         // Move obstacles
         for (i = 0; i < N_obstacles; i++) {
           updateObstaclePosition(i);
@@ -1597,9 +1636,11 @@ exports.makeModel = function() {
 
         // Accumulate accelerations from bonded interactions into a(t+dt)
         updateBondAccelerations();
+        checkAccelerations();
 
         // Accumulate accelerations from spring forces
         updateSpringAccelerations();
+        checkAccelerations();
 
         // Accumulate optional gravitational accelerations
         updateGravitationalAcceleration();
@@ -1619,6 +1660,7 @@ exports.makeModel = function() {
           speed[i] = Math.sqrt(vx[i]*vx[i] + vy[i]*vy[i]);
         }
 
+        checkTemperature();
         adjustTemperature();
       } // end of integration loop
       model.computeOutputState();
