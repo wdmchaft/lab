@@ -796,6 +796,7 @@ modeler.model = function(initialProperties) {
 
      The optional springConstant parameter (measured in eV/nm^2) is used to
   */
+  model.DRAG_FRICTION_COEFFICIENT = 10;
   model.lastCursorData = {};
   model.cursorSpeeds = [];
 
@@ -820,6 +821,12 @@ modeler.model = function(initialProperties) {
 
     model.lastCursorData = { x: x, y: y, time: model.getTime() };
 
+    // Quick test to see about increasing friction during drag
+    nodes[model.INDICES.FRICTION][atomIndex] *= model.DRAG_FRICTION_COEFFICIENT;
+
+    console.log("Adding spring force to atom " + atomIndex + "; friction = " + nodes[model.INDICES.FRICTION][atomIndex]);
+    console.log("(model.DRAG_FRICTION_COEFFICIENT = " + model.DRAG_FRICTION_COEFFICIENT +")");
+
     return coreModel.addSpringForce(atomIndex, x, y, springConstant);
   };
 
@@ -830,8 +837,15 @@ modeler.model = function(initialProperties) {
   };
 
   model.removeSpringForce = function(i) {
+    var atomIndex = coreModel.springForceAtomIndex(i);
+
+    nodes[model.INDICES.FRICTION][atomIndex] /= model.DRAG_FRICTION_COEFFICIENT;
+
+    console.log("Removing spring force from atom " + atomIndex + "; friction = " + nodes[model.INDICES.FRICTION][atomIndex]);
+    console.log("(model.DRAG_FRICTION_COEFFICIENT = " + model.DRAG_FRICTION_COEFFICIENT +")");
+
     coreModel.removeSpringForce(i);
-  },
+  };
 
   // return a copy of the array of speeds
   model.get_speed = function() {
