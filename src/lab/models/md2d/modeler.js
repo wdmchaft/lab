@@ -796,14 +796,38 @@ modeler.model = function(initialProperties) {
 
      The optional springConstant parameter (measured in eV/nm^2) is used to
   */
+  model.lastCursorData = {};
+  model.cursorSpeeds = [];
+
+  model.updateCursorSpeed = function(x, y, time) {
+    var dx, dy, speed;
+
+    dx = x - model.lastCursorData.x;
+    dy = y - model.lastCursorData.y;
+
+    speed = Math.sqrt(dx*dx + dy*dy) / (time - model.lastCursorData.time);
+    model.cursorSpeeds.push({ speed: speed, time: time });
+  };
+
+  model.getSpeeds = function() {
+    return model.cursorSpeeds.map(function(x) { return x.speed; }).filter(function(speed) {
+      return speed !== Infinity && !isNaN(speed);
+    });
+  };
+
   model.addSpringForce = function(atomIndex, x, y, springConstant) {
     if (springConstant == null) springConstant = 2000;
-    coreModel.addSpringForce(atomIndex, x, y, springConstant);
-  },
+
+    model.lastCursorData = { x: x, y: y, time: model.getTime() };
+
+    return coreModel.addSpringForce(atomIndex, x, y, springConstant);
+  };
 
   model.updateSpringForce = function(i, x, y) {
+    model.updateCursorSpeed(x, y, model.getTime());
+    model.lastCursorData = { x: x, y: y, time: model.getTime() };
     coreModel.updateSpringForce(i, x, y);
-  },
+  };
 
   model.removeSpringForce = function(i) {
     coreModel.removeSpringForce(i);
