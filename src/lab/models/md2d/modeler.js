@@ -817,7 +817,7 @@ modeler.model = function(initialProperties) {
   };
 
   model.addSpringForce = function(atomIndex, x, y, springConstant) {
-    if (springConstant == null) springConstant = 2000;
+    if (springConstant == null) springConstant = 500;
 
     model.lastCursorData = { x: x, y: y, time: model.getTime() };
 
