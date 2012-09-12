@@ -1247,7 +1247,7 @@ exports.makeModel = function() {
       springForceY[N_springForces]          = y;
       springForceStrength[N_springForces]   = strength;
 
-      N_springForces++;
+      return N_springForces++;
     },
 
     updateSpringForce: function(i, x, y) {
@@ -1278,6 +1278,10 @@ exports.makeModel = function() {
           arrays.copy(savedArrays[i], springForces[i]);
         }
       }
+    },
+
+    springForceAtomIndex: function(i) {
+      return springForceAtomIndex[i];
     },
 
     addObstacle: function(x, y, width, height, density, color, visible) {
@@ -1600,7 +1604,7 @@ exports.makeModel = function() {
         if (temperature > maxTemperature) {
           maxTemperature = temperature;
           timeOfMaxTemperature = time;
-          console.log(temperature + " at " + time);
+          //console.log(temperature + " at " + time);
         }
       }
 
