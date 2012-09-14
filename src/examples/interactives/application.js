@@ -393,7 +393,7 @@ var ROOT = "/examples",
         timeFormatter = d3.format("5.0f"),
         timePrefix = "",
         timeSuffix = " (fs)",
-        column_titles = ['X', 'Y', 'VX', 'VY', 'AX', 'AY', 'PX', 'PY', 'SPEED', 'CHARGE', 'RADIUS', 'FRICTION', 'ELEMENT'],
+        column_titles = ['X', 'Y', 'VX', 'VY', 'AX', 'AY', 'PX', 'PY', 'SPEED', 'CHARGE', 'RADIUS', 'FRICTION', 'VISIBLE', 'ELEMENT'],
         i_formatter = d3.format(" 2d"),
         charge_formatter = d3.format(" 1.1f"),
         f2_formatter = d3.format(" 1.2f"),
@@ -403,7 +403,7 @@ var ROOT = "/examples",
         formatters = [f_formatter, f_formatter, e_formatter,
                       e_formatter, e_formatter, e_formatter,
                       e_formatter, e_formatter, e_formatter,
-                      charge_formatter, f2_formatter, f2_formatter, i_formatter];
+                      charge_formatter, f2_formatter, f2_formatter, i_formatter, i_formatter];
 
     atoms.length = nodes[0].length;
     reset = reset || false;
@@ -466,14 +466,14 @@ var ROOT = "/examples",
       if ($heading.hasClass(ascending)) {
         $heading.removeClass(ascending);
         $heading.addClass(descending);
-        sortOrder = "desc";
+        sortOrder = descending;
       } else if ($heading.hasClass(descending)) {
         $heading.removeClass(descending);
         $heading.addClass(ascending);
-        sortOrder = 'asc';
+        sortOrder = ascending;
       } else {
-        $heading.addClass(ascending);
-        sortOrder = 'asc';
+        $heading.addClass(descending);
+        sortOrder = descending;
       }
       $heading.siblings().removeClass("sorted");
       $tbody.find("tr").tsort('td:eq('+$heading.index()+')', 

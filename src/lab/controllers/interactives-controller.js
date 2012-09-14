@@ -1,5 +1,5 @@
 /*global controllers model Thermometer layout $ alert ACTUAL_ROOT grapher */
-/*jshint eqnull: true*/
+/*jshint eqnull: true boss: true */
 controllers.interactivesController = function(interactive, viewSelector, applicationCallbacks, layoutStyle) {
 
   var controller = {},
@@ -173,7 +173,8 @@ controllers.interactivesController = function(interactive, viewSelector, applica
       case 'pulldown':
         return createPulldown(component);
       case 'thermometer':
-        return createThermometer(component);
+        thermometer = createThermometer(component);
+        return thermometer;
       case 'energyGraph':
         return createEnergyGraph(component);
     }
@@ -321,25 +322,56 @@ controllers.interactivesController = function(interactive, viewSelector, applica
     return { elem: $pulldown };
   }
 
+  /**
+    Returns an 'interactive thermometer' object, that wraps a base Thermometer with a label for use
+    in Interactives.
+
+    properties are:
+
+     elem:      DOM element containing the Thermometer div and the label div
+     component: base Thermometer object, with no label
+     callback:  standard interactive component callback, called as soon as the display is ready
+     update:    method to ask thermometer to update its display
+  */
   function createThermometer(component) {
-    var $thermometer = $('<div>').attr('id', component.id);
+    var $thermometer = $('<div>').attr('id', component.id),
 
-    thermometer = new Thermometer($thermometer, null, component.min, component.max);
-    queuePropertiesListener(['temperature'], updateThermometerValue);
+        units =  component.readingUnits  || "K",
+        offset = component.readingOffset || 0,
+        scale =  component.readingScale  || 1,
 
-    return {
-      elem: $('<div class="interactive-thermometer">')
+        labelIsReading = !!component.labelIsReading,
+        labelText = labelIsReading ? "" : "Thermometer",
+        $label = $('<p class="label">').text(labelText).width('6em'),
+        $elem = $('<div class="interactive-thermometer">')
                 .append($thermometer)
-                .append($('<p class="label">').text('Thermometer')),
+                .append($label),
+
+        thermometerComponent = new Thermometer($thermometer, null, component.min, component.max),
+        self;
+
+    function updateLabel(temperature) {
+      temperature = (temperature - offset) * scale;
+      $label.text(temperature.toFixed(0) + " " + units);
+    }
+
+    queuePropertiesListener(['temperature'], function() { self.update(); });
+
+    return self = {
+      elem:      $elem,
+      component: thermometerComponent,
+
       callback: function() {
-        thermometer.resize();
-        updateThermometerValue();
+        thermometerComponent.resize();
+        self.update();
+      },
+
+      update: function() {
+        var t = model.get('temperature');
+        thermometerComponent.add_value(t);
+        if (labelIsReading) updateLabel(t);
       }
     };
-  }
-
-  function updateThermometerValue() {
-    thermometer.add_value(model.get('temperature'));
   }
 
   function queuePropertiesListener(properties, func) {
@@ -477,7 +509,7 @@ controllers.interactivesController = function(interactive, viewSelector, applica
     }
 
     layout.addView('moleculeContainers', modelController.moleculeContainer);
-    if (thermometer) layout.addView('thermometers', thermometer);
+    if (thermometer) layout.addView('thermometers', thermometer.component);
     if (energyGraph) layout.addView('energyGraphs', energyGraph);
     $(window).unbind('resize');
 
@@ -525,7 +557,7 @@ controllers.interactivesController = function(interactive, viewSelector, applica
         divArray,
         div,
         componentId,
-        $top, $right, $rightwide,
+        $top, $right, $rightwide, $bottom,
         i, ii;
 
     componentCallbacks = [];
