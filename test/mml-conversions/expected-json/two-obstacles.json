@@ -49,7 +49,8 @@
     "CHARGE": [],
     "FRICTION": [],
     "ELEMENT": [],
-    "PINNED": []
+    "PINNED": [],
+    "MARKED": []
   },
   "obstacles": {
     "x": [
