@@ -397,6 +397,7 @@ parseMML = (mmlString) ->
     removeArrayIfDefault = (name, array, defaultVal) ->
       delete json.atoms[name] if array.every (i)-> i is defaultVal
 
+    removeArrayIfDefault("MARKED", marked, 0)
     removeArrayIfDefault("VISIBLE", visible, 1)
     removeArrayIfDefault("DRAGGABLE", draggable, 0)
 
