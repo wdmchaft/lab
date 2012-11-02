@@ -1,15 +1,12 @@
 {
   "title": "Testing: Energy Minimization",
   "about": "Interactive example",
-  "models": [
-    {
-      "id": "energy-minimization$0",
-      "url": "/imports/legacy-mw-content/converted/conversion-and-physics-examples/energy-minimization$0.json",
-      "viewOptions": {
-        "controlButtons": ""
-      }
+  "model": {
+    "url": "/imports/legacy-mw-content/converted/conversion-and-physics-examples/energy-minimization$0.json",
+    "viewOptions": {
+      "controlButtons": ""
     }
-  ],
+  },
   "components": [
     {
       "type": "button",
@@ -70,5 +67,6 @@
       "action": "minimizeEnergy();"
     }
   ],
-  "layout": {}
+  "layout": {
+  }
 }

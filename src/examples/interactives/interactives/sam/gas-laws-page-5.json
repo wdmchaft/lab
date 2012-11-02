@@ -1,15 +1,12 @@
 {
   "title": "Gas Laws Page 5: The Temperature-Pressure Relationship",
   "about": "Interactive example",
-  "models": [
-    {
-      "id": "page5$0",
-      "url": "/imports/legacy-mw-content/converted/sam-activities/gas-laws/original-interactives-in-pages/page5/page5$0.json",
-      "viewOptions": {
-        "controlButtons": ""
-      }
+  "model": {
+    "url": "/imports/legacy-mw-content/converted/sam-activities/gas-laws/original-interactives-in-pages/page5/page5$0.json",
+    "viewOptions": {
+      "controlButtons": ""
     }
-  ],
+  },
   "components": [
     {
       "type": "button",

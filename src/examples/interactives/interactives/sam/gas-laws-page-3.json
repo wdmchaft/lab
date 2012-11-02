@@ -1,15 +1,12 @@
 {
   "title": "Gas Laws Page 3: The Volume-Pressure Relationship",
   "about": "Interactive example",
-  "models": [
-    {
-      "id": "page3$0",
-      "url": "/imports/legacy-mw-content/converted/sam-activities/gas-laws/original-interactives-in-pages/page3/page3$0.json",
-      "viewOptions": {
-        "controlButtons": ""
-      }
+  "model": {
+    "url": "/imports/legacy-mw-content/converted/sam-activities/gas-laws/original-interactives-in-pages/page3/page3$0.json",
+    "viewOptions": {
+      "controlButtons": ""
     }
-  ],
+  },
   "components": [
     {
       "type": "button",
@@ -66,9 +63,7 @@
     {
       "type": "pressureGraph",
       "id": "pressure-chart",
-      "options": {
-        "xmax": 100
-      }
+      "options": { "xmax": 100 }
     }
   ],
   "layout": {

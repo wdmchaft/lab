@@ -1,15 +1,17 @@
 {
   "title": "Testing: Visible and Ivisible Atoms",
   "about": "Interactive example",
-  "models": [
-    {
-      "id": "visible-and-invisible$0",
-      "url": "/imports/legacy-mw-content/converted/conversion-and-physics-examples/visible-and-invisible$0.json",
-      "viewOptions": {
-        "controlButtons": "play_reset"
-      }
+  "model": {
+    "url": "/imports/legacy-mw-content/converted/conversion-and-physics-examples/visible-and-invisible$0.json",
+    "viewOptions": {
+      "controlButtons": "play_reset"
+    },
+    "energyGraphOptions": {
+      "ymin": -1.0,
+      "ymax":  1.0,
+      "xmax":  50.0
     }
-  ],
+  },
   "components": [
     {
       "type": "pulldown",

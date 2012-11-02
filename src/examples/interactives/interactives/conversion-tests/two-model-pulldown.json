@@ -1,22 +1,12 @@
 {
   "title": "Testing: Select one of Two Models using Pulldown Menu",
   "about": "Interactive example",
-  "models": [
-    {
-      "id": "gas1",
-      "url": "/imports/legacy-mw-content/converted/sam-activities/phase-change/original-interactives-in-pages/page2/gas1.json",
-      "viewOptions": {
-        "controlButtons": "play_reset"
-      }
-    },
-    {
-      "id": "gas2",
-      "url": "/imports/legacy-mw-content/converted/sam-activities/phase-change/original-interactives-in-pages/page2/gas2.json",
-      "viewOptions": {
-        "controlButtons": "play_reset"
-      }
+  "model": {
+    "url": "/imports/legacy-mw-content/converted/sam-activities/phase-change/original-interactives-in-pages/page2/gas1.json",
+    "viewOptions": {
+      "controlButtons": "play_reset"
     }
-  ],
+  },
   "components": [
     {
       "type": "pulldown",
@@ -24,11 +14,11 @@
       "options": [
         {
           "text": "Gas1",
-          "loadModel": "gas1"
+          "loadModel": "/imports/legacy-mw-content/converted/sam-activities/phase-change/original-interactives-in-pages/page2/gas1.json"
         },
         {
           "text": "Gas2",
-          "loadModel": "gas2"
+          "loadModel": "/imports/legacy-mw-content/converted/sam-activities/phase-change/original-interactives-in-pages/page2/gas2.json"
         }
       ]
     }

@@ -1,15 +1,12 @@
 {
   "title": "Testing: Multiple Attached Images",
   "about": "Interactive example",
-  "models": [
-    {
-      "id": "multiple-attached-images$0",
-      "url": "/imports/legacy-mw-content/converted/potential-tests/multiple-attached-images/multiple-attached-images$0.json",
-      "viewOptions": {
-        "controlButtons": "play_reset"
-      }
+  "model": {
+    "url": "/imports/legacy-mw-content/converted/potential-tests/multiple-attached-images/multiple-attached-images$0.json",
+    "viewOptions": {
+      "controlButtons": "play_reset"
     }
-  ],
+  },
   "components": [
     {
       "type": "button",

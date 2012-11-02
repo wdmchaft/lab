@@ -1,15 +1,12 @@
 {
   "title": "Gas Laws Page 4: The Temperature-Volume Relationship",
   "about": "Interactive example",
-  "models": [
-    {
-      "id": "page4$0",
-      "url": "/imports/legacy-mw-content/converted/sam-activities/gas-laws/original-interactives-in-pages/page4/page4$0.json",
-      "viewOptions": {
-        "controlButtons": ""
-      }
+  "model": {
+    "url": "/imports/legacy-mw-content/converted/sam-activities/gas-laws/original-interactives-in-pages/page4/page4$0.json",
+    "viewOptions": {
+      "controlButtons": ""
     }
-  ],
+  },
   "components": [
     {
       "type": "button",
