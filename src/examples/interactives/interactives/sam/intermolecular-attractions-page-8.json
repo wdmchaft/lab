@@ -1,13 +1,16 @@
 {
   "title": "Intermolecular Attractions Page 8: Your Immune System",
   "about": "Interactive example",
-  "model": {
-    "url": "/imports/legacy-mw-content/converted/sam-activities/intermolecular-attraction/original-interactives-in-pages/page8/page8$0.json",
-    "viewOptions": {
-      "controlButtons": "play",
-      "enableKeyboardHandlers": false
+  "models": [
+    {
+      "id": "page8$0",
+      "url": "/imports/legacy-mw-content/converted/sam-activities/intermolecular-attraction/original-interactives-in-pages/page8/page8$0.json",
+      "viewOptions": {
+        "controlButtons": "play",
+        "enableKeyboardHandlers": false
+      }
     }
-  },
+  ],
   "components": [
     {
       "type": "pulldown",
@@ -15,7 +18,7 @@
       "options": [
         {
           "text": "Select an antibody shape",
-          "loadModel": "/imports/legacy-mw-content/converted/sam-activities/intermolecular-attraction/original-interactives-in-pages/page8/page8$0.json"
+          "loadModel": "page8$0"
         },
         {
           "text": "shape1",
