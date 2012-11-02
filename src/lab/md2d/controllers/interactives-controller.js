@@ -16,6 +16,7 @@ define(function (require) {
         modelController,
         $interactiveContainer,
         models = [],
+        modelsHash = {},
         propertiesListeners = [],
         playerConfig,
         componentCallbacks = [],
@@ -311,11 +312,10 @@ define(function (require) {
     }
 
     function getModel(modelId) {
-      for (var i=0, ii=models.length; i<ii; i++) {
-        if (models[i].id === modelId) {
-          return models[i];
-        }
+      if (modelsHash[modelId]) {
+        return modelsHash[modelId];
       }
+      throw new Error("No model found with id "+modelId);
     }
 
     /**
@@ -1027,8 +1027,14 @@ define(function (require) {
         }
       }
 
+      // set up the list of possible models
       if (interactive.models != null && interactive.models.length > 0) {
         models = interactive.models;
+        for (i=0, ii=models.length; i<ii; i++) {
+          model = models[i];
+          model.id = model.id || "model"+i;
+          modelsHash[model.id] = model;
+        }
         loadModel(models[0].id);
       }
 
