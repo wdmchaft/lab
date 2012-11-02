@@ -127,7 +127,7 @@ function processInteractive(interactive) {
 
   function processElementAction(element) {
     if (element.action) {
-      modelUrl = /.*loadModel\(['"](.*)['"]\)/.exec(element.action);
+      modelUrl = /.*loadModel\(['"](.*)['"].*\)/.exec(element.action);
       if (modelUrl && modelUrl[1]) {
         newModelId = createModelFromURL(modelUrl[1]);
         element.action = element.action.replace(modelUrl[1], newModelId);
