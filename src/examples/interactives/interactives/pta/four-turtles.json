@@ -1,0 +1,64 @@
+{
+  "title": "Testing: Four Turtles",
+  "publicationStatus": "draft",
+  "subtitle": "First test of the PTA model-type.",
+  "about": "",
+  "models": [
+    {
+      "id": "four-turtles",
+      "type": "pta",
+      "url": "models/pta/four-turtles.json",
+      "viewOptions": {
+        "controlButtons": "play_reset"
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "name":  "numTurtles",
+      "label": "Number of Turtles",
+      "units": "",
+      "value": [
+          "return getNumberOfTurtles();"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "type": "button",
+      "id": "add-random-turtle",
+      "text": "Add a random turtle",
+      "action": "addRandomTurtle()"
+    },
+    {
+      "type": "numericOutput",
+      "id": "current-turtles",
+      "property": "numTurtles",
+      "displayValue": "return format('f')(value)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show-gridlines",
+      "text": "Show Grid Lines",
+      "property": "gridLines"
+    },
+    {
+      "type": "checkbox",
+      "id": "show-xunits",
+      "text": "Show X units",
+      "property": "xunits"
+    },
+    {
+      "type": "checkbox",
+      "id": "show-yunits",
+      "text": "Show Y units",
+      "property": "yunits"
+    }
+  ],
+  "layout": {
+    "bottom": [
+      ["add-random-turtle", "current-turtles"],
+      ["show-gridlines", "show-xunits", "show-yunits"]
+    ]
+  }
+}
