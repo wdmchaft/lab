@@ -9,7 +9,7 @@
       "type": "pta",
       "url": "models/pta/four-turtles.json",
       "viewOptions": {
-        "controlButtons": "play_reset"
+        "controlButtons": "play_reset_step"
       }
     }
   ],
