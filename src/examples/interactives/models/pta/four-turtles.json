@@ -2,6 +2,8 @@
   "type": "pta",
   "width": 75,
   "height": 50,
+  "horizontalWrapping": false,
+  "verticalWrapping": false,
   "viewOptions": {
     "backgroundColor": "rgba(168,210,255,255)",
     "showClock": true,

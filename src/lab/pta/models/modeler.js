@@ -64,6 +64,20 @@ define(function(require) {
 
           set_timeStep: function(ts) {
             this.timeStep = ts;
+          },
+
+          set_horizontalWrapping: function(hw) {
+            this.horizontalWrapping = hw;
+            if (engine) {
+              engine.setHorizontalWrapping(hw);
+            }
+          },
+
+          set_verticalWrapping: function(vw) {
+            this.verticalWrapping = vw;
+            if (engine) {
+              engine.setVerticalWrapping(vw);
+            }
           }
 
         },
@@ -499,6 +513,8 @@ define(function(require) {
       engine = pta.createEngine();
 
       engine.setSize([model.get('width'), model.get('height')]);
+      engine.setHorizontalWrapping(model.get('horizontalWrapping'));
+      engine.setVerticalWrapping(model.get('verticalWrapping'));
 
       window.state = modelOutputState = {};
 

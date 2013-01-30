@@ -40,6 +40,10 @@ define(function (require, exports, module) {
         // The number of turtles in the system.
         N = 0,
 
+        // booleans indicating whether the turtle world wraps
+        horizontalWrapping,
+        verticalWrapping,
+
         // Initializes basic data structures.
         initialize = function () {
           createTurtlesArray(0);
@@ -125,38 +129,56 @@ define(function (require, exports, module) {
               rightwall = width - r,
               topwall = height - r;
 
-          // Bounce off vertical walls.
-          if (x[i] < leftwall) {
-            while (x[i] < leftwall - width) {
+          if (horizontalWrapping) {
+            // wrap around vertical walls
+            if (x[i] + radius[i] < leftwall) {
               x[i] += width;
-            }
-            x[i]  = leftwall + (leftwall - x[i]);
-            vx[i] *= -1;
-            px[i] *= -1;
-          } else if (x[i] > rightwall) {
-            while (x[i] > rightwall + width) {
+            } else if (x[i] - radius[i] > rightwall) {
               x[i] -= width;
             }
-            x[i]  = rightwall - (x[i] - rightwall);
-            vx[i] *= -1;
-            px[i] *= -1;
+          } else {
+            // Bounce off vertical walls.
+            if (x[i] < leftwall) {
+              while (x[i] < leftwall - width) {
+                x[i] += width;
+              }
+              x[i]  = leftwall + (leftwall - x[i]);
+              vx[i] *= -1;
+              px[i] *= -1;
+            } else if (x[i] > rightwall) {
+              while (x[i] > rightwall + width) {
+                x[i] -= width;
+              }
+              x[i]  = rightwall - (x[i] - rightwall);
+              vx[i] *= -1;
+              px[i] *= -1;
+            }
           }
 
-          // Bounce off horizontal walls
-          if (y[i] < bottomwall) {
-            while (y[i] < bottomwall - height) {
+          if (verticalWrapping) {
+            // wrap around horizontal walls
+            if (y[i] + radius[i] < bottomwall) {
               y[i] += height;
-            }
-            y[i]  = bottomwall + (bottomwall - y[i]);
-            vy[i] *= -1;
-            py[i] *= -1;
-          } else if (y[i] > topwall) {
-            while (y[i] > topwall + height) {
+            } else if (y[i] - radius[i] > topwall) {
               y[i] -= height;
             }
-            y[i]  = topwall - (y[i] - topwall);
-            vy[i] *= -1;
-            py[i] *= -1;
+          } else {
+            // Bounce off horizontal walls
+            if (y[i] < bottomwall) {
+              while (y[i] < bottomwall - height) {
+                y[i] += height;
+              }
+              y[i]  = bottomwall + (bottomwall - y[i]);
+              vy[i] *= -1;
+              py[i] *= -1;
+            } else if (y[i] > topwall) {
+              while (y[i] > topwall + height) {
+                y[i] -= height;
+              }
+              y[i]  = topwall - (y[i] - topwall);
+              vy[i] *= -1;
+              py[i] *= -1;
+            }
           }
         },
 
@@ -234,6 +256,14 @@ define(function (require, exports, module) {
 
       getSize: function() {
         return [size[0], size[1]];
+      },
+
+      setHorizontalWrapping: function(v) {
+        horizontalWrapping = !!v;
+      },
+
+      setVerticalWrapping: function(v) {
+        verticalWrapping = !!v;
       },
 
       setTurtleProperties: function (i, props) {

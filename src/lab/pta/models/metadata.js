@@ -22,7 +22,13 @@ define(function() {
       },
       viewRefreshInterval: {
         defaultValue: 50
-      }
+      },
+      horizontalWrapping: {
+        defaultValue: false
+      },
+      verticalWrapping: {
+        defaultValue: false
+      },
     },
 
     viewOptions: {

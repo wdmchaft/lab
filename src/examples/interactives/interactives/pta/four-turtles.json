@@ -38,6 +38,18 @@
     },
     {
       "type": "checkbox",
+      "id": "horizontal-wrapping",
+      "text": "Horizontal Wrapping",
+      "property": "horizontalWrapping"
+    },
+    {
+      "type": "checkbox",
+      "id": "vertical-wrapping",
+      "text": "Vertical Wrapping",
+      "property": "verticalWrapping"
+    },
+    {
+      "type": "checkbox",
       "id": "show-gridlines",
       "text": "Show Grid Lines",
       "property": "gridLines"
@@ -57,7 +69,7 @@
   ],
   "layout": {
     "bottom": [
-      ["add-random-turtle", "current-turtles"],
+      ["add-random-turtle", "current-turtles", "horizontal-wrapping", "vertical-wrapping"],
       ["show-gridlines", "show-xunits", "show-yunits"]
     ]
   }
