@@ -19,7 +19,7 @@ define(function (require, exports, module) {
         // System dimensions as [x, y]. Default value can be changed until turles are created.
         size = [50, 50],
 
-        // The current model time, in femtoseconds.
+        // The current model time in ticks.
         time = 0,
 
         // The current integration time step

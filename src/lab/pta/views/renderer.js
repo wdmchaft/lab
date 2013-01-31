@@ -39,6 +39,7 @@ define(function (require) {
         turtleDiv, turtleDivPre,
 
         // for model clock
+        showClock,
         timeLabel,
         modelTimeFormatter = d3.format("5.0f"),
         timePrefix = "",
@@ -53,7 +54,7 @@ define(function (require) {
         model2pxInv;
 
     function modelTimeLabel() {
-      return timePrefix + modelTimeFormatter(model.get('time')) + timeSuffix;
+      return timePrefix + modelTimeFormatter(model.get('time')/100) + timeSuffix;
     }
 
     // Returns gradient appropriate for a given turtle.

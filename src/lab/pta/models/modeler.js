@@ -193,9 +193,7 @@ define(function(require) {
       var timeStep = model.get('timeStep'),
           t, sampleTime;
 
-      // viewRefreshInterval is defined in Classic MW as the number of timesteps per view update.
-      // However, in pta we prefer the more physical notion of integrating for a particular
-      // length of time.
+      // viewRefreshInterval is defined as the model integration time period
       console.time('integration');
       engine.integrate(model.get('viewRefreshInterval') * timeStep, timeStep);
       console.timeEnd('integration');
