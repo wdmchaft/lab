@@ -4,6 +4,17 @@ required_ruby_patchlevel = 194
 
 minimum_node_version = "v0.8.6"
 
+# make sure xcode-select is called
+begin
+  osx_major, osx_minor = `sw_vers -productVersion`.split('.')
+  if osx_major.to_i >= 10 && osx_minor.to_i >= 8
+    `xcode-select --print-path`
+  end
+rescue Errno::ENOENT
+  puts "*** You don't appear to have XCode installed, can't run xcode-select --print-path ..."
+  exit 1
+end
+
 if RUBY_VERSION != required_ruby_version && RUBY_PATCHLEVEL != required_ruby_patchlevel
   puts "*** building Lab project requires installation of Ruby #{required_ruby_version}-p#{required_ruby_patchlevel}"
   puts "*** You have Ruby #{RUBY_VERSION}-p#{RUBY_PATCHLEVEL} ..."
