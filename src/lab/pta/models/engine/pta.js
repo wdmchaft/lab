@@ -32,7 +32,7 @@ define(function (require, exports, module) {
         //                      Turtle Properties
 
         // Individual property arrays for the turtles, indexed by turtle number
-        radius, x, y, vx, vy, px, py, ax, ay, speed,
+        radius, x, y, vx, vy, px, py, ax, ay, speed, shape,
 
         // An object that contains references to the above turtle-property arrays
         turtles,
@@ -89,6 +89,7 @@ define(function (require, exports, module) {
             ax             = turtles.ax;
             ay             = turtles.ay;
             speed          = turtles.speed;
+            shape          = turtles.shape;
           }
 
         },
@@ -110,8 +111,8 @@ define(function (require, exports, module) {
           turtles.speed          = arrays.create(num, 0, arrayTypes.float);
 
           // For the sake of clarity, manage all turtles properties in one
-          // place (engine). In the future, think about separation of engine
-          // properties and view-oriented properties like these:
+          // place (engine).
+          turtles.shape          = arrays.create(num, 0, arrayTypes.uint8);
           turtles.marked         = arrays.create(num, 0, arrayTypes.uint8);
           turtles.visible        = arrays.create(num, 0, arrayTypes.uint8);
 

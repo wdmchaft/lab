@@ -126,6 +126,9 @@ define(function() {
       speed: {
         readOnly: true,
         serialize: false
+      },
+      shape: {
+        defaultValue: 0
       }
     },
 
