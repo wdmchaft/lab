@@ -7,6 +7,12 @@ App::Application.routes.draw do
     "#{host}:5984/_utils/"
   }
 
+  root :to => 'dashboard#index'
+
+  namespace 'dashboard' do
+    match 'readme' => :readme, :defaults => { :format => 'md'}
+  end
+
   namespace :models do
     resources :md2ds
   end
