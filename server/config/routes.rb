@@ -9,9 +9,7 @@ App::Application.routes.draw do
 
   root :to => 'dashboard#index'
 
-  namespace 'dashboard' do
-    match 'readme' => :readme, :defaults => { :format => 'md'}
-  end
+  get 'readme' => "dashboard#readme", :defaults => { :format => 'md'}
 
   namespace :models do
     resources :md2ds
