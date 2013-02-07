@@ -100,7 +100,7 @@ AUTHORING = false;
     if ($selectInteractive.length > 0 && $selectInteractive.val()) {
       selectInteractiveHandler();
     } else {
-      document.location.hash = '#interactives/samples/1-oil-and-water-shake.json';
+      document.location.hash = '#interactives/interactives_samples_1-oil-and-water-shake.json';
     }
   }
 
