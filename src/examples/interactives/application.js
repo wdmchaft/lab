@@ -100,21 +100,11 @@ AUTHORING = false;
     if ($selectInteractive.length > 0 && $selectInteractive.val()) {
       selectInteractiveHandler();
     } else {
-      document.location.hash = '#interactives/interactives_samples_1-oil-and-water-shake.json';
+      document.location.hash = '#/interactives/interactives_samples_1-oil-and-water-shake.json';
     }
   }
 
-  function getHash() {
-    var match,
-        h = document.location.hash;
-    if (h) {
-      match = h.match(/(.*?\.json)/);
-      h = match[1];
-    }
-    return h;
-  }
-
-  if (hash = getHash()) {
+  if (hash = document.location.hash) {
     interactiveUrl = hash.substr(1, hash.length);
 
     $.get(interactiveUrl).done(function(results) {
@@ -179,7 +169,7 @@ AUTHORING = false;
   });
 
   $(window).bind('hashchange', function() {
-    if (getHash() !== hash) {
+    if (document.location.hash !== hash) {
       location.reload();
     }
   });
