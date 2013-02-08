@@ -213,7 +213,7 @@ create_public_symlinks:
 	cd server/public; \
 	ln -s -f examples/interactives/embeddable-author.html embeddable-author.html; \
 	ln -s -f examples/interactives/embeddable.html embeddable.html; \
-	ln -s -f examples/interactives/interactives.html interactives_home.html; \
+	ln -s -f examples/interactives/interactives.html interactives.html; \
 	ln -s -f examples/interactives/embeddable-author.css embeddable-author.css; \
 	ln -s -f examples/interactives/embeddable.css embeddable.css; \
 	ln -s -f examples/interactives/molecules-view.css molecules-view.css; \
