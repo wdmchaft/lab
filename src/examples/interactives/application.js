@@ -96,11 +96,19 @@ AUTHORING = false;
       buttonHandlersAdded = false,
       modelButtonHandlersAdded = false;
 
+  function isStaticPage() {
+    return !!(document.location.pathname && document.location.pathname.match(/\/examples\/interactives\/.*\.html/));
+  }
+
   if (!document.location.hash) {
     if ($selectInteractive.length > 0 && $selectInteractive.val()) {
       selectInteractiveHandler();
     } else {
-      document.location.hash = '#/interactives/interactives_samples_1-oil-and-water-shake.json';
+        if (isStaticPage()) {
+            document.location.hash = '#interactives/samples/1-oil-and-water-shake.json';          
+        } else { 
+          document.location.hash = '#/interactives/interactives_samples_1-oil-and-water-shake.json';
+        }
     }
   }
 
