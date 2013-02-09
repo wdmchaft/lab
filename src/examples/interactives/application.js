@@ -388,6 +388,9 @@ AUTHORING = false;
       if (testsFilter && group.category === "Tests") return true;
       return false;
     });
+    groups = _.sortBy(groups, function(group) { 
+      return group.name;
+    });
     _.each(groups, function (group) {
       var publicFilter = $("#public").is(':checked'),
           draftFilter = $("#draft").is(':checked'),
