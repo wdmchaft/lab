@@ -93,22 +93,39 @@ AUTHORING = false;
       hash,
       jsonModelPath, contentItems, mmlPath,
       viewType,
+      interactivesPromise,
       buttonHandlersAdded = false,
       modelButtonHandlersAdded = false;
+  
+  function isEmbeddablePage() {
+    return ($selectInteractive.length === 0);
+  }
 
-  function isStaticPage() {
-    return !!(document.location.pathname && document.location.pathname.match(/\/examples\/interactives\/.*\.html/));
+  if (!isEmbeddablePage()) {
+    interactivesPromise = $.get('interactives.json');
+
+    interactivesPromise.done(function(results) {
+      if (typeof results === 'string') {
+        results = JSON.parse(results);
+      }
+       interactiveDescriptions = results;
+    });
+
+    // TODO: some of the Deferred, ajax call have no error handlers?
+    interactivesPromise.fail(function(){
+      // TODO: need a better way to display errors
+      console.log("Failed to retrieve interactives.json");
+      alert("Failed to retrieve interactives.json");
+    });
   }
 
   if (!document.location.hash) {
     if ($selectInteractive.length > 0 && $selectInteractive.val()) {
       selectInteractiveHandler();
     } else {
-        if (isStaticPage()) {
-            document.location.hash = '#interactives/samples/1-oil-and-water-shake.json';          
-        } else { 
-          document.location.hash = '#/interactives/interactives_samples_1-oil-and-water-shake.json';
-        }
+      interactivesPromise.done(function(){
+          document.location.hash = interactiveDescriptions.interactives[0].path;
+      });
     }
   }
 
@@ -416,9 +433,8 @@ AUTHORING = false;
   }
 
   function setupFullPage() {
-    $.get('interactives.json').done(function(results) {
-      if (typeof results === 'string') results = JSON.parse(results);
-      interactiveDescriptions = results;
+    interactivesPromise.done(function(results) {
+
       restoreOptionsFromCookie();
       setupSelectList();
       $("#select-filters input").click(setupSelectList);
