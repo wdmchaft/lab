@@ -9,9 +9,11 @@ var interactiveEditor,
     $components,
     minLeft = Infinity,
     minTop = Infinity,
+    maxX = -Infinity,
+    maxY = -Infinity,
     modelWidth = 50,
     modelTop = 0,
-    modelLeft = 1;
+    modelLeft = 0;
 
 function update() {
   var redraws;
@@ -24,15 +26,26 @@ function update() {
 
   createContainers();
   placeComponentsInContainers();
+  positionContainers();
 
-  redraws = 7;
+  redraws = 0;
 
-  while (redraws--) {
-    positionContainers();
+  while (redraws < 20 && !fit()) {
     adjustVariables();
+    positionContainers();
+    redraws++;
   }
 
-  positionContainers();
+}
+
+function fit() {
+  var availableWidth  = $interactiveContainer.width(),
+      availableHeight = $interactiveContainer.height();
+
+  if ((maxX <= availableWidth && maxY <= availableHeight) && (availableWidth - maxX < 1 || availableHeight - maxY < 1))
+    return true;
+
+  return false;
 }
 
 function createContainers() {
@@ -236,15 +249,27 @@ function getDimensionOfContainer($container, dim) {
 // shrinks the model to fit in the interactive, given the sizes
 // of the other containers around it.
 function adjustVariables() {
-  var maxY = -Infinity,
-      maxX = -Infinity,
+  var speed = 1,
       id, $container,
       right, bottom,
       $modelContainer,
       availableWidth, availableHeight, ratio,
       modelAspectRatio;
 
+  if (isNaN(modelWidth) || modelWidth === 0) {
+    modelWidth = 1;
+  }
+  if (isNaN(modelLeft)) {
+    modelLeft = 0;
+  }
+  if (isNaN(modelTop)) {
+    modelTop = 0;
+  }
+
   // Calc maxX and maxY.
+  maxY = -Infinity;
+  maxX = -Infinity;
+
   for (id in $containers) {
     if (!$containers.hasOwnProperty(id)) continue;
     $container = $containers[id];
@@ -266,16 +291,17 @@ function adjustVariables() {
   modelAspectRatio = getObject(components, "model")["aspect-ratio"];
 
   if (maxX > availableWidth || maxY > availableHeight) {
-    ratio = Math.min(1 - 0.2 * (maxX - availableWidth) / availableWidth, 1 - 0.2 * (maxY - availableHeight) / availableHeight);
-    modelWidth = $modelContainer.width() * ratio;
+    ratio = Math.min(1 - speed * (maxX - availableWidth) / availableWidth, 1 - speed * (maxY - availableHeight) / availableHeight);
   }
   if (maxX < availableWidth && maxY < availableHeight) {
-    ratio = Math.min(1 + 0.2 * (availableWidth - maxX) / availableWidth, 1 + 0.2 * (availableHeight - maxY) / availableHeight);
-    modelWidth = $modelContainer.width() * ratio;
+    ratio = Math.min(1 + speed * (availableWidth - maxX) / availableWidth, 1 + speed * (availableHeight - maxY) / availableHeight);
   }
-
+  if (ratio !== undefined) {
+    modelWidth = modelWidth * ratio;
+  }
   modelLeft -= minLeft;
   modelTop -= minTop;
+
   minTop = Infinity;
   minLeft = Infinity;
 }
