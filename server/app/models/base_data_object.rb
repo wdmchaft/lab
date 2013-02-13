@@ -4,7 +4,7 @@ class BaseDataObject < CouchRest::Model::Base
 
   # track imorted (from buld process)
   property :parent_doc_revision, String
-  property :from_import,         TrueClass, :default => true
+  property :from_import,         TrueClass, :default => false
 
 
   def self.delete_everything
