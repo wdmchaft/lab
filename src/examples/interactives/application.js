@@ -689,8 +689,7 @@ AUTHORING = false;
           document.title = interactive.title;
         }
 
-        // document.location.hash = interactive.path
-        // location.reload();
+        document.location.hash = interactive.path
       },
       dataType: "json",
       contentType: "application/json",
