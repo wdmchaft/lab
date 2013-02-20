@@ -25,32 +25,13 @@ class InteractivesController < ApplicationController
   end
 
   def create
-    # create_path_and_id(params[:interactive])
     group = Group.find(params[:interactive][:groupKey])
-    groupKey = group.path.gsub('/','_')
-    title = params[:interactive][:title].gsub(' ', '_')
-    
-    params[:interactive][:id] = "interactives_#{groupKey}_#{title}"
-    params[:interactive][:path] = "/interactives/#{params[:interactive][:id]}"
-
+    create_path_and_id(group)
 
     @interactive = Interactive.new(params[:interactive])
     @interactive.group = group
 
-
-    interactive_model = InteractiveModel.new(:viewOptions => params[:interactive][:models].first[:viewOptions],
-                                             :parameters => params[:interactive][:parameters],
-                                             :outputs => params[:interactive][:outputs],
-                                             :filteredOutputs => params[:interactive][:filteredOutputs])
-  
-
-    orig_model_url = params[:interactive][:models].first[:url]
-    model_id = orig_model_url.split('/').last.gsub('.json','')
-    model = Models::Md2d.find(model_id)
-    new_model = Models::Md2d.create(model.attributes)
-
-    interactive_model.md2d = new_model
-    interactive_model.save!
+    interactive_model = create_interactive_model
     @interactive.interactive_models << interactive_model
     
     if @interactive.save
@@ -73,4 +54,34 @@ class InteractivesController < ApplicationController
     Presenters::Interactive.new(model)
   end
 
+  def create_path_and_id(group)
+    groupKey = group.path.gsub('/','_')
+    title = params[:interactive][:title].gsub(' ', '_')
+    
+    params[:interactive][:id] = "interactives_#{groupKey}_#{title}"
+    params[:interactive][:path] = "/interactives/#{params[:interactive][:id]}"
+
+  end
+
+  def create_interactive_model
+    interactive_model = InteractiveModel.new(:viewOptions => params[:interactive][:models].first[:viewOptions],
+                                             :parameters => params[:interactive][:parameters],
+                                             :outputs => params[:interactive][:outputs],
+                                             :filteredOutputs => params[:interactive][:filteredOutputs])
+    interactive_model.md2d = create_model
+    interactive_model.save!
+    interactive_model
+  end
+
+  def create_model
+    orig_model_url = params[:interactive][:models].first[:url]
+    model_id = orig_model_url.split('/').last.gsub('.json','')
+    old_model = Models::Md2d.find(model_id)
+    old_model.clone! do |m|
+      m.from_import = false
+      m.local_ref_id = m.id
+      m.name = nil
+      m.url = m.id
+    end
+  end
 end
