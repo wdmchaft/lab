@@ -94,15 +94,21 @@ AUTHORING = false;
       foldFunc,
       interactiveUrl,
       interactive,
+      interactiveRemote,
       hash,
       jsonModelPath, contentItems, mmlPath,
       viewType,
       interactivesPromise,
       buttonHandlersAdded = false,
+      interactiveRemoteKeys = ['id', 'from_import', 'groupKey', 'path'],
       modelButtonHandlersAdded = false;
 
   function isEmbeddablePage() {
     return ($selectInteractive.length === 0);
+  }
+
+  function isStaticPage() {
+    return !(document.location.pathname.match(/^\/interactives.*/));
   }
 
   if (!isEmbeddablePage()) {
@@ -144,7 +150,8 @@ AUTHORING = false;
 
     $.get(interactiveUrl).done(function(results) {
       if (typeof results === 'string') results = JSON.parse(results);
-      interactive = results;
+      interactiveRemote = results;
+      interactive = _.omit(interactiveRemote, interactiveRemoteKeys);
 
       if (interactive.title) {
         document.title = interactive.title;
@@ -268,7 +275,7 @@ AUTHORING = false;
       $("#about-pane-title").text("About: " + interactive.title);
 
       if (interactive.subtitle) {
-        $aboutContent.append('<p>' + interactive.subtitle + '</p>');
+        $aboutContent.html('<p>' + interactive.subtitle + '</p>');
       }
 
       if (Object.prototype.toString.call(interactive.about) !== "[object Array]") {
@@ -466,6 +473,7 @@ AUTHORING = false;
         $("#interactive-subtitle").remove();
         $interactiveHeader.append('<div id="interactive-subtitle">' + interactive.subtitle + '</div>');
       }
+      setupAboutPane();
       finishSetupFullPage();
     });
   }
@@ -596,7 +604,9 @@ AUTHORING = false;
 
       $iframeWrapper.resizable({ helper: "ui-resizable-helper" });
     }
-    setupCopySaveInteractive();
+    if(!isStaticPage()) {
+      setupCopySaveInteractive();
+    }
   }
 
   function setupIframeListenerFor(iframe) {
@@ -671,17 +681,19 @@ AUTHORING = false;
     var httpMethod = 'POST',
     url = '/interactives';
 
-    // if (interactive['from_import']) {
-    //   $saveInteractiveButton.text("Save As");
-    // }else {
-    //   httpMethod = 'PUT';
-    //   url = url + '/' + interactive.id;
-    // }
+    if(!interactiveRemote.from_import) {
+      httpMethod = 'PUT';
+      url = '/interactives/' + interactiveRemote.id;
+    }
 
-    newInteractiveState = jQuery.extend(true, {}, interactiveState);
+    // create an interactive to POST/PUT
+    // merge the, possibly updated, interactive with the interactive last 
+    // loaded from the webapp.
+    newInteractiveState = jQuery.extend(true, interactiveRemote, interactiveState);
     newInteractiveState['title'] = interactiveTitle;
     // get the group from the current interactive
-    newInteractiveState['groupKey'] = interactive['groupKey'];
+    newInteractiveState['groupKey'] = interactiveRemote.groupKey;
+    newInteractiveState.from_import = false;
     interactiveJSON = {'interactive': newInteractiveState};
 
     jQuery.ajax({
@@ -690,13 +702,17 @@ AUTHORING = false;
       data: JSON.stringify(interactiveJSON),
       success: function(results) {
         if (typeof results === 'string') results = JSON.parse(results);
-        interactive = results;
+        interactiveRemote = results;
+        interactive = _.omit(interactiveRemote, interactiveRemoteKeys);
 
         if (interactive.title) {
           document.title = interactive.title;
         }
 
-        document.location.hash = interactive.path
+        document.location.hash = interactiveRemote.path
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        alert("Error: "+ textStatus + " : " + errorThrown)
       },
       dataType: "json",
       contentType: "application/json",
@@ -723,48 +739,44 @@ AUTHORING = false;
   }
 
   function setupCopySaveInteractive() {
-
-    if (interactive['from_import']) {
-      $saveInteractiveButton.text("Save As");
+    $saveInteractiveButton.show();
+    if (interactiveRemote.from_import) {
+      $saveInteractiveButton.text("Save As ...");
+      $(".save-interactive-form").dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+          "Save": function() {
+            var interactiveTitle = $(".save-interactive-title").val();
+            $(this).dialog("close");
+            getInteractiveState(interactiveTitle);
+          },
+          "Cancel": function() {
+            $(this).dialog("close");
+          }
+        }
+      });
+      
     }else {
       $saveInteractiveButton.text("Save");
     }
 
-    $(".save-interactive-form").dialog({
-      autoOpen: false,
-      modal: true,
-      buttons: {
-        "Save": function() {
-          var interactiveTitle = $(".save-interactive-title").val();
-          $(this).dialog("close");
-          getInteractiveState(interactiveTitle);
-        },
-        "Cancel": function() {
-          $(this).dialog("close");
-        }
-      }
-    });
 
     $saveInteractiveButton.on('click', function() {
       var interactiveState, newInteractiveState, interactiveJSON;
+      if (interactiveRemote.from_import) {
+        $('.save-interactive-form').dialog("open");
+      } else {
+        getInteractiveState(interactive['title']);
+      }
 
-      $('.save-interactive-form').dialog("open");
 
-
-      // try {
-      //   // warn user
-
-      //   } catch (e) {
-      //     alert("Interactive JSON syntax error: " + e.message);
-      //     throw new Error("Interactive JSON syntax error: " + e.message);
-      //   }
-
-        if(onFullPage()) {
-          controller.loadInteractive(interactive, '#interactive-container');
-        } else {
-          iframePhone.post({ type:'loadInteractive', data:interactive  });
-        }
-      });
+      if(onFullPage()) {
+        controller.loadInteractive(interactive, '#interactive-container');
+      } else {
+        iframePhone.post({ type:'loadInteractive', data:interactive  });
+      }
+    });
   }
 
   // Setup and enable next and previous Interactive buttons
